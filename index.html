@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>WebAudioAPI サンプル (ES6)</title>
+  </head>
+  <body>
+    <h1>WebAudioAPI サンプル (ES6)</h1>
+    <p>最低限しか書いてないので一回しか再生できない&止まらない・読み込み終わって無くてもボタンが押せる</p>
+    <a href="https://github.com/zekisato/WebAudioAPI_Example">CODE</a>
+    <p>使用BGM 魔王魂 - サイバー45 :https://maoudamashii.jokersounds.com/archives/bgm_maoudamashii_cyber45.html</p>
+    <input type='button' onclick="player.start(0)" value="Play">
+    <script type="text/javascript">
+    const audioMgr = new AudioContext(); //サウンドのデコード・作成・音声処理(DAPに曲を追加する・EQ付きスピーカーの役割)
+    const player = audioMgr.createBufferSource() //AudioBufferSourceNode(DAPの役割) 一つのDAPに入る曲は一個まで
+    player.connect(audioMgr.destination);//playerをAudioMgrに接続する( DAP<===3.5mmCable===>EQ-SP )
+
+    const getAudioBuffer = url => {
+      fetch(url).then( response => {//fetch-ファイルをダウンロードする promise型
+        console.log(response.status)//リクエスト結果
+        return response.arrayBuffer()//ファイルをarrayBufferとして扱う
+      } ).then( arrbuffer => {
+        audioMgr.decodeAudioData(arrbuffer).then(decoded=>{//デコードする
+            //デコード後の処理
+            player.buffer=decoded; //バッファをDAPに転送
+        })
+      })
+    }
+    window.onload = () =>{
+      getAudioBuffer('bgm_maoudamashii_cyber45.mp3')
+    }
+    </script>
+  </body>
+</html>
